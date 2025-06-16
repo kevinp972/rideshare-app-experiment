@@ -1,0 +1,133 @@
+---
+title: "Causal Effect Estimation - Part 2"
+author: "KP"
+date: "2025-06-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+Sys.setenv(LANG = "en_US.UTF-8")
+```
+
+```{r}
+data <- read.csv('data/Processed_Data.csv')
+head(data)
+```
+
+# IV 2SLS Estimation
+
+## TOT - Causal Effect of EverApplied on TimeDriving_Minutes
+
+The following Two-Stage Least Squares (2SLS) specification is adopted for estimation on the causal effect of having ever applied throughout all time periods (`EverApplied`) on time spent driving per day (`TimeDriving_Minutes`).
+
+First stage:
+$$
+\text{EverApplied}_{i} \cdot \text{After}_{it} = \pi_1 (\text{Treated}_{i} \cdot \text{After}_{it}) + \mu_{\text{city}_i, \text{expstart}_i, \text{date}_t} + \nu_{it}
+$$
+
+Second Stage:
+$$
+\text{TimeDriving_Minutes}_{it} = \beta_1 \cdot \text{(EverApplied}_{i} \cdot \text{After}_{it} \text{)}_{predicted} + \mu_{\text{city}_i, \text{expstart}_i, \text{date}_t} + \epsilon_{it}
+$$
+
+Recall that the $\mu_{\text{city}_i, \text{expstart}_i, \text{date}_t}$ (CohortXTime) FE is perfectly colinear with `After`. Hence, it is not included in the second stage.
+We have also omitted `EverApplied` in our second stage, as it is an endogenous variable and by adding it, it would violate the exclusion restriction that `Treated`X`After` only affect `TimeDriving_Minutes` through `EverApplied`X`After`.
+
+```{r}
+library(fixest)
+
+data$City_Cohort_FE <- as.factor(data$City_Cohort_Date_FE)
+
+model <- feols(
+  TimeDriving_Minutes ~ 1 | City_Cohort_Date_FE | EverApplied:After ~ Treated:After,
+  data = data
+)
+summary(model, stage = 1)
+```
+
+The above shows the first stage of the 2SLS estimation. As shown, the P-value is incredibly small, indicating that `Treated`X`After` is a strong instrument for `EverApplied`X`After`.
+
+```{r}
+summary(model)
+```
+```{r}
+level_effect <- coef(model)[["fit_EverApplied:After"]]
+
+control_pre_mean <- mean(
+  data$TimeDriving_Minutes[data$EverApplied == 0 & data$After == 0],
+  na.rm = TRUE
+)
+percent_effect <- 100 * (level_effect / control_pre_mean)
+
+sprintf(
+  "TOT Estimate (IV): Taking up the program increases time driven by %.2f minutes per day on average (%.1f%% increase relative to control group pre-treatment mean of %.2f minutes).",
+  level_effect, percent_effect, control_pre_mean
+)
+```
+
+## TOT - Causal Effect of EverApplied on TimeDriving_Minutes
+
+```{r}
+model <- feols(
+  TimeDriving_Minutes ~ 1 | City_Cohort_Date_FE | EverEnrolled:After ~ Treated:After,
+  data = data
+)
+summary(model, stage = 1)
+```
+
+Again, strong instrument.
+
+```{r}
+summary(model)
+```
+
+```{r}
+level_effect <- coef(model)[["fit_EverEnrolled:After"]]
+
+control_pre_mean <- mean(
+  data$TimeDriving_Minutes[data$EverEnrolled == 0 & data$After == 0],
+  na.rm = TRUE
+)
+percent_effect <- 100 * (level_effect / control_pre_mean)
+
+sprintf(
+  "TOT Estimate (IV): Enrolling (applying and enrolling successfully) in the program increases time driven by %.2f minutes per day on average (%.1f%% increase relative to control group pre-treatment mean of %.2f minutes).",
+  level_effect, percent_effect, control_pre_mean
+)
+```
+
+## Turning Uptake Into Impact: What It Means for Platform Strategy
+
+Comparing the TOT estimate of a 17.9% increase in minutes driven per day to the ITT estimate of 2.09%, the IV regression identifies the causal effect of enrolling in the program — specifically for those drivers who enrolled because they were offered the program (compliers). This suggests the incentive program meaningfully increases driver activity on the platform among participants. 
+
+This finding supports the idea that the program can be rolled out more broadly, especially in supply-constrained cities, to improve labor availability. Since take-up is critical to achieving these gains, it’s important for the firm to also invest in strategies that boost enrollment.
+
+While not shown here for brevity of this analysis, a log-linear specification (e.g., log(1 + y) ~ x) would allow for direct interpretation in percentage terms, and the addition of 1 prevents issues when the outcome is zero. As shown below, for log(y) ~ x, when log(y) = 0, x is undefined.
+
+```{r}
+#(log(y) = x  →  y = exp(x))
+x <- seq(-3, 3, length.out = 300)
+y <- exp(x)
+
+plot(x, y,
+     type = "l",
+     col = "blue",
+     lwd = 2,
+     xlab = "x",
+     ylab = "y",
+     main = expression(paste("Graph of ", log(y), " = x (i.e., ", y, " = e^x)"))
+)
+
+grid()
+```
+
+Combined with estimates of labor elasticity (how much 1% more labor supply affects KPIs like rides or profits), the platform can estimate the value of one additional enrollee and benchmark that against acquisition costs. This could support decisions based on marginal cost = marginal revenue logic for marketing spend per city.
+
+Lastly, since this is based on early rollout, it’s important to monitor effect sizes and take-up rates over time, as both may decline due to saturation or selection. Ongoing reevaluation will help maximize return on investment.
+
+Thank you for taking the time to read this analysis. I'm especially grateful to Professor Keith Chen for his incredibly captivating teaching and the inspiration he provided, which motivated me to explore and build upon the homework assignment from his class, where this dataset was originally provided.
+
+
+
+
