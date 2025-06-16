@@ -2,7 +2,9 @@
 title: "Causal Effect Estimation - Part 2"
 author: "KP"
 date: "2025-06-15"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -31,8 +33,8 @@ $$
 \text{TimeDriving_Minutes}_{it} = \beta_1 \cdot \text{(EverApplied}_{i} \cdot \text{After}_{it} \text{)}_{predicted} + \mu_{\text{city}_i, \text{expstart}_i, \text{date}_t} + \epsilon_{it}
 $$
 
-Recall that the $\mu_{\text{city}_i, \text{expstart}_i, \text{date}_t}$ (CohortXTime) FE is perfectly colinear with `After`. Hence, it is not included in the second stage.
-We have also omitted `EverApplied` in our second stage, as it is an endogenous variable and by adding it, it would violate the exclusion restriction that `Treated`X`After` only affect `TimeDriving_Minutes` through `EverApplied`X`After`.
+Recall that the $\mu_{\text{city}_i, \text{expstart}_i, \text{date}_t}$ (Cohort x Time) FE is perfectly colinear with `After`. Hence, it is not included in the second stage.
+We have also omitted `EverApplied` in our second stage, as it is an endogenous variable and by adding it, it would violate the exclusion restriction that `Treated` x `After` only affect `TimeDriving_Minutes` through `EverApplied` x `After`.
 
 ```{r}
 library(fixest)
@@ -46,7 +48,7 @@ model <- feols(
 summary(model, stage = 1)
 ```
 
-The above shows the first stage of the 2SLS estimation. As shown, the P-value is incredibly small, indicating that `Treated`X`After` is a strong instrument for `EverApplied`X`After`.
+The above shows the first stage of the 2SLS estimation. As shown, the P-value is incredibly small, indicating that `Treated` x `After` is a strong instrument for `EverApplied` x `After`.
 
 ```{r}
 summary(model)
