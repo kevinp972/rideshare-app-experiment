@@ -103,9 +103,9 @@ sprintf(
 
 Comparing the TOT estimate of a 17.9% increase in minutes driven per day to the ITT estimate of 2.09%, the IV regression identifies the causal effect of enrolling in the program — specifically for those drivers who enrolled because they were offered the program (compliers). This suggests the incentive program meaningfully increases driver activity on the platform among participants. 
 
-This finding supports the idea that the program can be rolled out more broadly, especially in supply-constrained cities, to improve labor availability. Since take-up is critical to achieving these gains, it’s important for the firm to also invest in strategies that boost enrollment.
+This finding supports the idea that **the program can be rolled out more broadly, especially in supply-constrained cities**, to improve labor availability. Since take-up is critical to achieving these gains, it’s important for the firm to also invest in strategies that boost enrollment.
 
-While not shown here for brevity of this analysis, a log-linear specification (e.g., log(1 + y) ~ x) would allow for direct interpretation in percentage terms, and the addition of 1 prevents issues when the outcome is zero. As shown below, for log(y) ~ x, when log(y) = 0, x is undefined.
+While not shown here for brevity of this analysis, a log-linear specification (e.g., log(1 + y) ~ x) would allow for **direct interpretation in percentage terms**, and the addition of 1 prevents issues when the outcome is zero. As shown below, for log(y) ~ x, when log(y) = 0, x is undefined.
 
 ```{r}
 #(log(y) = x  →  y = exp(x))
@@ -124,7 +124,7 @@ plot(x, y,
 grid()
 ```
 
-Combined with estimates of labor elasticity (how much 1% more labor supply affects KPIs like rides or profits), the platform can estimate the value of one additional enrollee and benchmark that against acquisition costs. This could support decisions based on marginal cost = marginal revenue logic for marketing spend per city.
+Combined with estimates of **labor elasticity** (how much 1% more labor supply affects KPIs like rides or profits), the platform can **estimate the value of one additional enrollee** and benchmark that against acquisition costs. This could support decisions based on marginal cost = marginal revenue logic for marketing spend per city.
 
 Lastly, since this is based on early rollout, it’s important to monitor effect sizes and take-up rates over time, as both may decline due to saturation or selection. Ongoing reevaluation will help maximize return on investment.
 
