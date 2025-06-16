@@ -1,6 +1,6 @@
 # Driver Incentive Program Evaluation
 
-This repository contains an in-depth analysis of a ride-sharing platform’s incentive program rollout. The goal is to measure its effectiveness in increasing driver engagement using advanced causal inference techniques, including **A/B testing**, **Difference-in-Differences (DiD)**, and **Instrumental Variables (IV)** to address endogeneity and estimate treatment effects.
+This repository contains an in-depth analysis of a ride-sharing platform’s incentive program rollout. The goal is to measure its effectiveness in increasing driver engagement using advanced **causal inference** techniques, including **A/B testing**, **Difference-in-Differences (DiD)**, and **Instrumental Variables (IV)** to address endogeneity and estimate treatment effects.
 
 ## Project Overview
 
