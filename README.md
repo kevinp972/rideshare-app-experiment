@@ -50,9 +50,9 @@ The analysis follows these key steps:
 
 ## Files in This Repo
 
-- `Causal Effect Estimation - Part 1.ipynb` – Main analysis using A/B Testing, DiD and Fixed Effects Regression
-- `Causal Effect Estimation - Part 2.Rmd` – IV regressions (R, using `fixest`)
-- `Causal Effect Estimation - Part 2.html` – The rendered version of the R Markdown File (**View this if you don't have R installed.**)
+- `Causal-Effect-Estimation---Part-1.ipynb` – Main analysis using A/B Testing, DiD and Fixed Effects Regression
+- `Causal-Effect-Estimation---Part-2.Rmd` – IV regressions (R, using `fixest`)
+- `Causal-Effect-Estimation---Part-2.pdf` – The rendered version of the R Markdown File (**View this if you don't have R installed.**)
 - `README.md` – This file
 
 ## 🙏 Acknowledgments
